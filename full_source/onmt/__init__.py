@@ -8,4 +8,4 @@ from onmt.Optim import Optim
 
 # For flake8 compatibility
 __all__ = [onmt.Loss, onmt.Models, onmt.opts,
-           Trainer, Optim, Statistics, onmt.io, onmt.translate]
+           "Trainer", "Optim", "Statistics", onmt.io, onmt.translate]

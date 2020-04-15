@@ -46,7 +46,7 @@ class HierarchicalContext(nn.Module):
 		self.layer_norm_query_word = onmt.modules.LayerNorm(size)
 		self.layer_norm_query_sent = onmt.modules.LayerNorm(size)
 		self.layer_norm_word = onmt.modules.LayerNorm(size)
- 		self.dropout = nn.Dropout(dropout)
+		self.dropout = nn.Dropout(dropout)
 		self.sent_attn = onmt.modules.MultiHeadedAttention(head_count, size, dropout=dropout)
 		self.word_attn = onmt.modules.MultiHeadedAttention(head_count, size, dropout=dropout)
 
@@ -78,7 +78,7 @@ class HierarchicalContext(nn.Module):
 		aeq(b_size_, b_size__)
 		aeq(s_size, s_size_)
 		aeq(t_size, t_size_)
-	
+
 		# Create padding mask for previous sentences
 		mask_sent = index < 0
 		index_ = copy.deepcopy(index)
@@ -109,7 +109,7 @@ class HierarchicalContext(nn.Module):
 	def _get_sent_context(self, query, context_word, context_index, attn_word):
 
 		b_size, t_size, d_size = query.size()
-		_, c_size = context_index.size()	
+		_, c_size = context_index.size()
 
 		# Sequence size now context_wordis context size
 		context_sent = context_word.view(b_size, c_size, t_size, d_size).transpose(1,2).contiguous().view(b_size*t_size, c_size, d_size)
@@ -174,7 +174,7 @@ class HierarchicalContext(nn.Module):
 
 		query_word_norm = self.layer_norm_query_word(query_)
 		query_sent_norm = self.layer_norm_query_sent(query_)
-	
+
 		index = torch.Tensor(self.get_context_index(context_index, b_size, b_size_, batch_i)).type_as(query.data).long()
 		
 		# Re-arrange the tensors for matching words
