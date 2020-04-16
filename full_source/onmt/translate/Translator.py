@@ -92,7 +92,7 @@ class Translator(object):
 				 out_file=None,
 				 translate_part="all",
 				 out_attn=None):
-		self.gpu = gpu
+		self.gpu = torch.device(gpu) if gpu > -1 else gpu
 		self.cuda = gpu > -1
 
 		self.model = model
@@ -225,6 +225,7 @@ class Translator(object):
 			torch.save(ctx_attn, self.out_attn)
 		return all_scores
 
+	@torch.no_grad()
 	def translate_batch(self, batch, data, context, translate_part):
 		"""
 		Translate a batch of sentences.
