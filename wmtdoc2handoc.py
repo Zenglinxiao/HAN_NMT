@@ -21,22 +21,27 @@ def check_last(output, sl, tl, doc_index):
 
 def wmtdoc2handoc(inputs, sl, tl, output):
     msg_format = "Extract {} valid segment from {} lines, {} doc in total."
+    err_msg="#not simutanously blank line: [{}]|[{}].#"
     doc_index = [0]
     with codecs.open(inputs + '.' + sl, 'r', encoding='utf8') as fin_src,\
             codecs.open(inputs + '.' + tl, 'r', encoding='utf8') as fin_tgt,\
             codecs.open(output + '.' + sl, 'w', encoding='utf8') as fout_src,\
             codecs.open(output + '.' + tl, 'w', encoding='utf8') as fout_tgt:
         valid_segments = 0
+        droped_line = 0
         for i, (sline, tline) in enumerate(zip(fin_src, fin_tgt)):
             if sline.strip() == '':
-                assert tline.strip() == '', \
-                    "blank line should only appear simutanously as boundary."
-                doc_index.append(valid_segments)
+                if tline.strip() != '':
+                    print(err_msg.format(sline, tline))
+                    droped_line += 1
+                else:
+                    doc_index.append(valid_segments)
             else:
                 valid_segments += 1
                 fout_src.write(sline)
                 fout_tgt.write(tline)
     doc_index = check_last(output, sl, tl, doc_index)
+    print(f"drop bad blank line pair: {droped_line}")
     print(msg_format.format(valid_segments, i+1, len(doc_index)))
     with codecs.open(output + '.doc', 'w', encoding='utf8') as fout_doc:
         for doc_idx in doc_index:
